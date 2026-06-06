@@ -119,6 +119,19 @@ func (flag *EnumSliceFlag) Set(value string) (err error) {
 		flag.all = true
 		return nil
 	}
+	// When the allowed values come from a function (network/auth/sibling-flag
+	// dependent), the candidate list may legitimately be empty at parse time
+	// because those dependencies are not resolved yet (flag order should not
+	// matter). In that case, accept the value(s) and let the command's RunE /
+	// the downstream API reject genuinely-invalid values.
+	if flag.AllowedFunc != nil && len(flag.Allowed) == 0 {
+		for _, v := range strings.Split(value, ",") {
+			if !core.Contains(flag.Values, v) {
+				flag.Values = append(flag.Values, v)
+			}
+		}
+		return nil
+	}
 	found := false
 	for _, v := range strings.Split(value, ",") {
 		for _, allowed := range flag.Allowed {

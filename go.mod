@@ -1,4 +1,4 @@
-module github.com/gildas/go-flags
+module github.com/delabrcd/go-flags
 
 go 1.25.8
 

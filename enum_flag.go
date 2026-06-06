@@ -87,6 +87,15 @@ func (flag *EnumFlag) Set(value string) (err error) {
 	if flag.AllowedFunc != nil && len(flag.Allowed) == 0 {
 		flag.Allowed, _ = flag.AllowedFunc(flag.cmd.Context(), flag.cmd, nil, "")
 	}
+	// When the allowed values come from a function (network/auth/sibling-flag
+	// dependent), the candidate list may legitimately be empty at parse time
+	// because those dependencies are not resolved yet (flag order should not
+	// matter). In that case, accept the value and let the command's RunE / the
+	// downstream API reject genuinely-invalid values.
+	if flag.AllowedFunc != nil && len(flag.Allowed) == 0 {
+		flag.Value = value
+		return nil
+	}
 	if slices.Contains(flag.Allowed, value) {
 		flag.Value = value
 		return nil
