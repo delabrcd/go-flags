@@ -100,7 +100,7 @@ func (flag *EnumFlag) Set(value string) (err error) {
 		flag.Value = value
 		return nil
 	}
-	return InvalidEnumValue.With(value, strings.Join(flag.Allowed, ", "))
+	return InvalidEnumValue.With(value, formatAllowed(flag.Allowed))
 }
 
 // CompletionFunc returns the completion function of the flag

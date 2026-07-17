@@ -146,7 +146,7 @@ func (flag *EnumSliceFlag) Set(value string) (err error) {
 	if found {
 		return nil
 	}
-	return InvalidEnumValue.With(value, strings.Join(flag.Allowed, ", "))
+	return InvalidEnumValue.With(value, formatAllowed(flag.Allowed))
 }
 
 // Append appends a value to the flag
